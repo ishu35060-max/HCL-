@@ -1,21 +1,31 @@
 # REPO LINK -   https://github.com/ishu35060-max/HCL-.git
 # Project 2: Student Academic Performance Analytics
 # Dataset: 02_student_performance.csv
-#
-# NOTE: I am assuming the columns look like this (change the names in the
-# CONFIG section if your CSV is different):
-#   Student_ID, Department, Attendance, Study_Hours, Internet_Access,
-#   Python_Marks and some other *_Marks columns
 
+import os
 import numpy as np
 import pandas as pd
+
+# --- Automatically download dataset if not present ---
+if not os.path.exists("data"):
+    os.makedirs("data")
+
+# Clone/Download file from the repo if missing
+if not os.path.exists("data/02_student_performance.csv"):
+    print("Downloading dataset from Git repository...")
+    os.system("git clone https://github.com/ishu35060-max/HCL-.git temp_git_repo")
+    if os.path.exists("temp_git_repo/data/02_student_performance.csv"):
+        os.rename("temp_git_repo/data/02_student_performance.csv", "data/02_student_performance.csv")
+    elif os.path.exists("temp_git_repo/02_student_performance.csv"):
+        os.rename("temp_git_repo/02_student_performance.csv", "data/02_student_performance.csv")
+    os.system("rm -rf temp_git_repo")
 
 # ---------------- CONFIG ----------------
 FILE = "data/02_student_performance.csv"
 ID_COL = "Student_ID"
 DEPT_COL = "Department"
-ATT_COL = "Attendance"
-STUDY_COL = "Study_Hours"
+ATT_COL = "Attendance_Percent"
+STUDY_COL = "Study_Hours_Per_Week"
 NET_COL = "Internet_Access"
 PYTHON_COL = "Python_Marks"
 # ----------------------------------------
@@ -29,7 +39,7 @@ print("\nData types:\n", df.dtypes)
 print("\nFirst 5 rows:\n", df.head())
 print("\nSummary:\n", df.describe())
 
-# every column that ends with _Marks is a subject score
+# every column that ends with _Marks is a subject sco
 score_cols = [c for c in df.columns if c.endswith("_Marks")]
 print("\nScore columns found:", score_cols)
 
@@ -99,7 +109,7 @@ print("\nTop 10 students by average marks:")
 print(top10[[ID_COL, DEPT_COL, "Average_Marks", "Grade"]].to_string(index=False))
 
 # 9. At-risk students (average below 40) ----------------------------
-at_risk = df[df["Average_Marks"] < 40]
+at_risk = df[df["Average_Marks" ] < 40]
 print(f"\nStudents below 40% average: {len(at_risk)} "
       f"({len(at_risk) / len(df) * 100:.1f}% of all students)")
 print(at_risk[[ID_COL, DEPT_COL, ATT_COL, STUDY_COL, "Average_Marks"]].to_string(index=False))
